@@ -21,6 +21,8 @@ def upload(filepath, s3_class=S3):
             body = bytes(fh.read())
     except FileNotFoundError:
         sys.exit(f"Error: file {filepath} not found.")
+    except PermissionError:
+        sys.exit(f"Error: Permissions error reading {filepath}.")
     key = f"{int(time())}{file_extension(filepath)}"
     s3_client = boto3.client('s3')
     s3 = s3_class(s3_client)

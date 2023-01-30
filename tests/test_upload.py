@@ -1,5 +1,6 @@
 import boto3
 import freezegun
+import os
 import pytest
 import subcommands
 
@@ -27,3 +28,14 @@ def test_upload_content_file_not_found(tmp_path):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         subcommands.upload.upload(tmp_file)
     assert f"Error: file {tmp_file} not found" in pytest_wrapped_e.value.code
+
+
+@mock_s3
+def test_upload_content_file_permissions_error(tmp_path):
+    tmp_file = str(tmp_path) + "tmpfile.txt"
+    with open(tmp_file, 'w') as f:
+        f.write('this is a test')
+    os.chmod(tmp_file, 0o000)
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        subcommands.upload.upload(tmp_file)
+    assert f"Error: Permissions error reading {tmp_file}." in pytest_wrapped_e.value.code
