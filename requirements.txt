@@ -1,2 +1,3 @@
 halo
 boto3>=1.26.59
+botocore>=1.26.59

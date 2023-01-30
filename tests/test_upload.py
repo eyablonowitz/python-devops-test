@@ -39,3 +39,13 @@ def test_upload_content_file_permissions_error(tmp_path):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         subcommands.upload.upload(tmp_file)
     assert f"Error: Permissions error reading {tmp_file}." in pytest_wrapped_e.value.code
+
+
+@mock_s3
+def test_upload_bad_object_causes_error(tmp_path):
+    tmp_file = str(tmp_path) + "tmpfile.txt"
+    with open(tmp_file, 'w') as f:
+        f.write('this is a test')
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        subcommands.upload.upload(tmp_file)
+    assert f"Error: unable to upload file.\n" in pytest_wrapped_e.value.code
