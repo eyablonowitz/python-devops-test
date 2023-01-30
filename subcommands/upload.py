@@ -1,3 +1,5 @@
+import sys
+
 import boto3
 import os
 
@@ -14,8 +16,11 @@ def file_extension(filepath):
 
 
 def upload(filepath, s3_class=S3):
-    with open(filepath, "rb") as fh:
-        body = bytes(fh.read())
+    try:
+        with open(filepath, "rb") as fh:
+            body = bytes(fh.read())
+    except FileNotFoundError:
+        sys.exit(f"Error: file {filepath} not found.")
     key = f"{int(time())}{file_extension(filepath)}"
     s3_client = boto3.client('s3')
     s3 = s3_class(s3_client)
